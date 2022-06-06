@@ -4,7 +4,7 @@
 ```bash
 mkdir build
 cd build
-cmake ..
+cmake .. # It may take a little bit!
 make -j 8
 ```
 
