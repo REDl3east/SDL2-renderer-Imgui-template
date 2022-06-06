@@ -1,4 +1,4 @@
-#SDL2 Renderer & Imgui Template
+# SDL2 Renderer & Imgui Template
 
 ## Quick Start
 ```bash
@@ -8,7 +8,7 @@ cmake ..
 make -j 8
 ```
 
-# Dependancies
+## Dependancies
 cmake 3.14+
 SDL2
 Imgui
