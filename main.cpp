@@ -50,7 +50,6 @@ int main(int argc, char** argv) {
 
   bool show_demo_window = true;
 
-  // Main loop
   bool done = false;
   while (!done) {
     SDL_Event event;
