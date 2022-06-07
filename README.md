@@ -8,6 +8,11 @@ cmake .. # It may take a little bit!
 make -j 8
 ```
 
+## Controls
+[q]   - quits
+[F11] - toggle fullscreen
+
+
 ## Dependancies
 - cmake 3.14+
 - SDL2
