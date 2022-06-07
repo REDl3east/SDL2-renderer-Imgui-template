@@ -10,8 +10,8 @@ make -j 8
 
 ## Controls
 
-[**q**]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- quits<br>
-[**F11**]&nbsp;- toggle fullscreen
+**q**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- quits<br>
+**F11**&nbsp;- toggle fullscreen
 
 
 ## Dependancies
