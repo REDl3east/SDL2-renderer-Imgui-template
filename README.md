@@ -9,10 +9,10 @@ make -j 8
 ```
 
 ## Controls
-<pre>
-[**q**]   - quits
+
+[**q**]   - quits<br>
 [**F11**] - toggle fullscreen
-</pre>
+
 
 ## Dependancies
 - cmake 3.14+
