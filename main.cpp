@@ -12,13 +12,17 @@
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
 
+std::shared_ptr<SDL_Window> SDL_CreateSharedWindow(const char* title, int x, int y, int w, int h, Uint32 flags);
+std::shared_ptr<SDL_Renderer> SDL_CreateSharedRenderer(SDL_Window* window, int index, Uint32 flags);
+std::shared_ptr<SDL_Texture> IMG_LoadSharedTexture(SDL_Renderer* renderer, const char* file);
+
 static constexpr const char* APP_NAME = "Dear ImGui SDL2 & SDL_Renderer example";
 static constexpr int INITIAL_WIDTH    = 1280;
 static constexpr int INITIAL_HEIGHT   = 720;
 static constexpr int SCREEN_NUM       = 1; // first monitor
 
 static bool fullscreen = false;
-bool show_demo_window = false;
+bool show_demo_window  = false;
 
 int main(int argc, char** argv) {
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0) {
@@ -27,29 +31,34 @@ int main(int argc, char** argv) {
   }
 
   Uint32 flags = (fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
-  auto window  = std::shared_ptr<SDL_Window>(SDL_CreateWindow(APP_NAME, SDL_WINDOWPOS_CENTERED_DISPLAY(SCREEN_NUM), SDL_WINDOWPOS_CENTERED_DISPLAY(SCREEN_NUM), INITIAL_WIDTH, INITIAL_HEIGHT, flags), [](auto* p) { SDL_DestroyWindow(p); });
+  auto window  = SDL_CreateSharedWindow(APP_NAME, SDL_WINDOWPOS_CENTERED_DISPLAY(SCREEN_NUM), SDL_WINDOWPOS_CENTERED_DISPLAY(SCREEN_NUM), INITIAL_WIDTH, INITIAL_HEIGHT, flags);
 
   if (!window) {
     printf("[ERROR] SDL_CreateWindow: %s\n", SDL_GetError());
     return -1;
   }
 
-  auto renderer = std::shared_ptr<SDL_Renderer>(SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED), [](auto* p) { SDL_DestroyRenderer(p); });
+  auto renderer = SDL_CreateSharedRenderer(window.get(), -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
   if (!renderer) {
     printf("[ERROR] SDL_CreateRenderer: %s\n", SDL_GetError());
     return -1;
   }
 
-	SDL_Texture *img = NULL;
-	int w, h; // texture width & height
-	img = IMG_LoadTexture(renderer.get(), "../assets/10_club.png");
-	SDL_QueryTexture(img, NULL, NULL, &w, &h); // get the width and height of the texture
-  SDL_Rect texr; 
-  texr.x = INITIAL_WIDTH/2 - w/2;
-  texr.y = INITIAL_HEIGHT/2 - h/2;
-  texr.w = w;
-  texr.h = h; 
+  auto img = IMG_LoadSharedTexture(renderer.get(), "../assets/10_club.png");
 
+  if (!img) {
+    printf("[ERROR] IMG_LoadTexture: %s\n", SDL_GetError());
+    return -1;
+  }
+
+  int w, h;
+  SDL_QueryTexture(img.get(), NULL, NULL, &w, &h); // get the width and height of the texture
+
+  SDL_Rect texr;
+  texr.x = INITIAL_WIDTH / 2 - w / 2;
+  texr.y = INITIAL_HEIGHT / 2 - h / 2;
+  texr.w = w;
+  texr.h = h;
 
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
@@ -72,10 +81,6 @@ int main(int argc, char** argv) {
         done = true;
       }
       switch (event.type) {
-        case SDL_QUIT: {
-          done = true;
-          break;
-        }
         case SDL_KEYDOWN: {
           if (event.key.keysym.sym == SDLK_F11) {
             fullscreen = !fullscreen;
@@ -105,7 +110,7 @@ int main(int argc, char** argv) {
     SDL_SetRenderDrawColor(renderer.get(), 255, 200, 100, 255);
     SDL_RenderClear(renderer.get());
 
-    SDL_RenderCopy(renderer.get(), img, NULL, &texr);
+    SDL_RenderCopy(renderer.get(), img.get(), NULL, &texr);
 
     ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
     SDL_RenderPresent(renderer.get());
@@ -118,4 +123,16 @@ int main(int argc, char** argv) {
   SDL_Quit();
 
   return 0;
+}
+
+std::shared_ptr<SDL_Window> SDL_CreateSharedWindow(const char* title, int x, int y, int w, int h, Uint32 flags) {
+  return std::shared_ptr<SDL_Window>(SDL_CreateWindow(title, x, y, w, h, flags), [](auto* p) { SDL_DestroyWindow(p); });
+}
+
+std::shared_ptr<SDL_Renderer> SDL_CreateSharedRenderer(SDL_Window* window, int index, Uint32 flags) {
+  return std::shared_ptr<SDL_Renderer>(SDL_CreateRenderer(window, index, flags), [](auto* p) { SDL_DestroyRenderer(p); });
+}
+
+std::shared_ptr<SDL_Texture> IMG_LoadSharedTexture(SDL_Renderer* renderer, const char* file) {
+  return std::shared_ptr<SDL_Texture>(IMG_LoadTexture(renderer, file), [](auto* p) { SDL_DestroyTexture(p); });
 }
