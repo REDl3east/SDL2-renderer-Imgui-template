@@ -2,6 +2,7 @@
 #include <memory>
 
 #include <SDL.h>
+#include "SDL_image.h"
 
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
@@ -17,6 +18,7 @@ static constexpr int INITIAL_HEIGHT   = 720;
 static constexpr int SCREEN_NUM       = 1; // first monitor
 
 static bool fullscreen = false;
+bool show_demo_window = false;
 
 int main(int argc, char** argv) {
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0) {
@@ -38,6 +40,17 @@ int main(int argc, char** argv) {
     return -1;
   }
 
+	SDL_Texture *img = NULL;
+	int w, h; // texture width & height
+	img = IMG_LoadTexture(renderer.get(), "../assets/10_club.png");
+	SDL_QueryTexture(img, NULL, NULL, &w, &h); // get the width and height of the texture
+  SDL_Rect texr; 
+  texr.x = INITIAL_WIDTH/2 - w/2;
+  texr.y = INITIAL_HEIGHT/2 - h/2;
+  texr.w = w;
+  texr.h = h; 
+
+
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO();
@@ -47,8 +60,6 @@ int main(int argc, char** argv) {
 
   ImGui_ImplSDL2_InitForSDLRenderer(window.get(), renderer.get());
   ImGui_ImplSDLRenderer_Init(renderer.get());
-
-  bool show_demo_window = true;
 
   bool done = false;
   while (!done) {
@@ -93,6 +104,8 @@ int main(int argc, char** argv) {
 
     SDL_SetRenderDrawColor(renderer.get(), 255, 200, 100, 255);
     SDL_RenderClear(renderer.get());
+
+    SDL_RenderCopy(renderer.get(), img, NULL, &texr);
 
     ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
     SDL_RenderPresent(renderer.get());
