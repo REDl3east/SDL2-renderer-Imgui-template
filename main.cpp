@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <memory>
 
-#include <SDL.h>
+#include "SDL.h"
 #include "SDL_image.h"
 
 #include "imgui.h"

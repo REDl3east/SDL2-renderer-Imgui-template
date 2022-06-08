@@ -13,6 +13,6 @@ set(IMGUI_SORUCE_BACKEND_DIR ${IMGUI_SORUCE_DIR}/backends)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
-add_executable(war main.cpp)
-target_link_libraries(war PRIVATE SDL2::SDL2-static SDL2_image imgui)
-target_include_directories(war PUBLIC ${SDL2_INCLUDE_DIR} ${IMGUI_SORUCE_DIR} ${IMGUI_SORUCE_BACKEND_DIR} ${SDL2_IMAGE_INCLUDE_DIR})
+add_executable(sdlrenderer-imgui-template main.cpp)
+target_link_libraries(sdlrenderer-imgui-template PRIVATE SDL2::SDL2-static SDL2_image imgui)
+target_include_directories(sdlrenderer-imgui-template PUBLIC ${SDL2_INCLUDE_DIR} ${IMGUI_SORUCE_DIR} ${IMGUI_SORUCE_BACKEND_DIR} ${SDL2_IMAGE_INCLUDE_DIR})
