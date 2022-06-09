@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
   }
 
   int w, h;
-  SDL_QueryTexture(img.get(), NULL, NULL, &w, &h); // get the width and height of the texture
+  SDL_QueryTexture(img.get(), NULL, NULL, &w, &h);
 
   SDL_Rect texr;
   texr.x = INITIAL_WIDTH / 2 - w / 2;
